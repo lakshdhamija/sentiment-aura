@@ -9,7 +9,7 @@ export const processTextHandler = async (req: Request, res: Response) => {
     if (!parsed.success) {
       return res.status(400).json({
         success: false,
-        errors: parsed.error.issues.map((issue) => issue.message)
+        errors: parsed.error.issues.map((issue) => issue.message),
       });
     }
 
