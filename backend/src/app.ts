@@ -2,10 +2,7 @@ import express from "express";
 import type { Application, Request, Response } from "express";
 import cors from "cors";
 import morgan from "morgan";
-import dotenv from "dotenv";
 import { aiRouter } from "./routes/index.js";
-
-dotenv.config();
 
 const app: Application = express();
 
