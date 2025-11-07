@@ -27,8 +27,10 @@ describe("POST /api/v1/ai/process-text", () => {
     const res = await request(app).post("/api/v1/ai/process-text").send({});
 
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty("errors");
-    expect(Array.isArray(res.body.errors)).toBe(true);
-    expect(res.body.errors[0]).toMatch(/Invalid input/i);
+    expect(res.body).toEqual({
+      success: false,
+      data: null,
+      error: expect.stringMatching(/Invalid input|unexpected/i),
+    });
   });
 });

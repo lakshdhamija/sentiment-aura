@@ -4,19 +4,23 @@ import { analyzeTextSchema } from "../validators/ai.validator.js";
 
 export const processTextHandler = async (req: Request, res: Response) => {
   try {
-    const parsed = analyzeTextSchema.safeParse(req.body);
+    const { text } = analyzeTextSchema.parse(req.body); // ✅ validation
 
-    if (!parsed.success) {
-      return res.status(400).json({
-        success: false,
-        errors: parsed.error.issues.map((issue) => issue.message),
-      });
-    }
+    const result = await analyzeText(text);
 
-    const result = await analyzeText(parsed.data.text);
-    res.status(200).json({ success: true, data: result });
-  } catch (err) {
-    console.error("processTextHandler error:", err);
-    res.status(500).json({ success: false, error: "Failed to process text" });
+    res.status(200).json({
+      success: true,
+      data: result,
+      error: null,
+    });
+  } catch (err: any) {
+    const message =
+      err.errors?.[0]?.message || err.message || "An unexpected error occurred";
+
+    res.status(400).json({
+      success: false,
+      data: null,
+      error: message,
+    });
   }
 };
