@@ -1,22 +1,39 @@
-import { groq as groqClient } from "../utils/grokClient.js";
+import { groq as groqClient } from "../utils/groqClient.js";
 
 export interface AIResponse {
   sentiment: number;
   keywords: string[];
 }
 
+type GroqLike = {
+  chat: {
+    completions: {
+      create: (
+        args: any
+      ) => Promise<{ choices: { message: { content: string } }[] }>;
+    };
+  };
+};
+
 export const analyzeText = async (text: string): Promise<AIResponse> => {
   const prompt = `
-  Analyze this text and return JSON strictly in this format:
+  You are a precise JSON generator.
+
+  Analyze the following text and respond ONLY with valid JSON.
+  DO NOT include explanations, text, or code fences.
+
+  The JSON must have this exact structure:
   {
     "sentiment": number between -1 and 1,
     "keywords": ["keyword1", "keyword2", ...]
   }
-  Text: "${text}"
+
+  Text to analyze:
+  "${text}"
   `;
 
   const response = await groqClient.chat.completions.create({
-    model: "llama3-8b-8192",
+    model: "llama-3.1-8b-instant",
     messages: [{ role: "user", content: prompt }],
   });
 

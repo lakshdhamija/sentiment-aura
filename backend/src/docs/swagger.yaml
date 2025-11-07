@@ -1,0 +1,58 @@
+openapi: 3.0.0
+info:
+  title: Sentiment Aura API
+  version: 1.0.0
+  description: The Sentiment Aura API analyzes user-provided text for emotional tone (sentiment)
+    and extracts the most relevant keywords.
+servers:
+  - url: http://localhost:8000
+    description: Local development
+
+paths:
+  /api/v1/ai/process-text:
+    post:
+      summary: Analyze sentiment and extract keywords from text
+      description: >
+        Accepts plain text and returns a sentiment score and a list of relevant keywords.
+      tags:
+        - AI
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - text
+              properties:
+                text:
+                  type: string
+                  description: Text to analyze
+                  example: "I love TypeScript!"
+      responses:
+        "200":
+          description: Successful analysis
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      sentiment:
+                        type: number
+                        description: Sentiment score between -1 and 1
+                        example: 0.95
+                      keywords:
+                        type: array
+                        items:
+                          type: string
+                        example: ["TypeScript", "backend", "love"]
+        "400":
+          description: Invalid request (validation failed)
+        "500":
+          description: Internal server error
