@@ -4,6 +4,7 @@ import cors from "cors";
 import morgan from "morgan";
 import { aiRouter } from "./routes/index.js";
 import { setupSwagger } from "./utils/swagger.js";
+import { errorHandler } from "./middlewares/errorHandler.js";
 
 const app: Application = express();
 
@@ -18,5 +19,6 @@ app.get("/", (_req: Request, res: Response) => {
 setupSwagger(app);
 
 app.use("/api/v1/ai", aiRouter);
+app.use(errorHandler);
 
 export default app;
