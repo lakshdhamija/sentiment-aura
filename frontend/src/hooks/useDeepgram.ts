@@ -13,26 +13,45 @@ export function useDeepgram({ onFinalSentence, onError }: UseDeepgramProps) {
   const mediaRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
+  // Helper: safely close everything
+  const cleanup = () => {
+    mediaRef.current?.stop();
+    streamRef.current?.getTracks().forEach((t) => t.stop());
+    wsRef.current?.close();
+    mediaRef.current = null;
+    streamRef.current = null;
+    wsRef.current = null;
+    setIsRecording(false);
+  };
+
   const startRecording = async () => {
     try {
-      // Request mic access
+      // Get a temporary Deepgram token from backend
+      const tokenRes = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/deepgram/token`
+      );
+      if (!tokenRes.ok) throw new Error("Token request failed");
+      const { key } = await tokenRes.json();
+      if (!key) throw new Error("Invalid token response");
+
+      // Ask for mic permission
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
 
+      // Create WebSocket using the short-lived token
       const socket = new WebSocket(
-        `wss://api.deepgram.com/v1/listen?model=nova-3&smart_format=true`,
-        ["token", import.meta.env.VITE_DEEPGRAM_API_KEY]
+        "wss://api.deepgram.com/v1/listen?model=nova-3&smart_format=true",
+        ["token", key]
       );
       wsRef.current = socket;
 
-      // --- Socket OPEN ---
+      // When connected
       socket.onopen = () => {
-        console.log("Deepgram connected");
-
+        console.log("🎧 Deepgram connected (secure token)");
         const recorder = new MediaRecorder(stream);
         mediaRef.current = recorder;
-        recorder.start(250);
 
+        recorder.start(250);
         recorder.ondataavailable = (e) => {
           if (socket.readyState === WebSocket.OPEN) socket.send(e.data);
         };
@@ -40,66 +59,54 @@ export function useDeepgram({ onFinalSentence, onError }: UseDeepgramProps) {
         setIsRecording(true);
       };
 
-      // --- Socket MESSAGE ---
+      // Handle incoming transcripts
       socket.onmessage = (msg) => {
         try {
           const data = JSON.parse(msg.data);
-          const transcriptText = data.channel?.alternatives?.[0]?.transcript?.trim();
-          if (!transcriptText) return;
-          if (!data.is_final) return;
+          const text = data.channel?.alternatives?.[0]?.transcript?.trim();
+          if (!text || !data.is_final) return;
 
-          setTranscript((prev) => prev + " " + transcriptText + " ");
-          onFinalSentence?.(transcriptText);
-        } catch (err) {
-          console.error("Error parsing Deepgram message:", err);
+          setTranscript((prev) => prev + " " + text + " ");
+          onFinalSentence?.(text);
+        } catch {
           onError?.("Speech stream parsing failed. Please retry.");
         }
       };
 
-      // --- Socket ERROR ---
+      // Handle network errors
       socket.onerror = (e) => {
-        console.error("Deepgram WebSocket error:", e);
-        onError?.("🎙️ Deepgram connection error. Check network or API key.");
-        stopRecording();
+        console.error("Deepgram socket error:", e);
+        onError?.("🎙️ Connection error. Check your network.");
+        cleanup();
       };
 
-      // --- Socket CLOSE ---
+      // Handle socket close or expiry
       socket.onclose = (event) => {
         console.warn("Deepgram socket closed:", event.code, event.reason);
-        if (mediaRef.current && mediaRef.current.state !== "inactive") {
-          mediaRef.current.stop();
+        if (event.code !== 1000) {
+          onError?.(
+            "Lost connection to speech service. Please tap Start again."
+          );
         }
-        if (streamRef.current) {
-          streamRef.current.getTracks().forEach((track) => track.stop());
-          streamRef.current = null;
-        }
-
-        if (isRecording) {
-          onError?.("Lost connection to speech service. Tap Start again.");
-        }
-        setIsRecording(false);
+        cleanup();
       };
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error starting recording:", err);
-      onError?.("Microphone access denied or unavailable.");
+      if (err.name === "NotAllowedError") {
+        onError?.("Microphone access denied. Please allow mic permissions.");
+      } else if (err.message?.includes("Token")) {
+        onError?.("Failed to obtain Deepgram token from backend.");
+      } else {
+        onError?.("Unexpected error. Please try again.");
+      }
+      cleanup();
     }
   };
 
   const stopRecording = () => {
-    console.log("Stopping recording…");
-    if (wsRef.current?.readyState === WebSocket.OPEN) wsRef.current.close();
-    mediaRef.current?.stop();
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop());
-      streamRef.current = null;
-    }
-    setIsRecording(false);
+    console.log("Stopping recording...");
+    cleanup();
   };
 
-  return {
-    transcript,
-    isRecording,
-    startRecording,
-    stopRecording,
-  };
+  return { transcript, isRecording, startRecording, stopRecording };
 }
