@@ -24,7 +24,7 @@ export default function App() {
         try {
           setIsLoading(true);
           const res = await fetch(
-            "http://localhost:8000/api/v1/ai/process-text",
+            `${import.meta.env.VITE_API_BASE_URL}/api/v1/ai/process-text`,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
