@@ -235,7 +235,7 @@ export default function SentimentAura({
           function drawAurora(
             p5: any,
             hue: number,
-            absS: number,
+            _absS: number,
             _spd: number,
             tShared: number
           ) {
