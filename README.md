@@ -1,72 +1,87 @@
-# 🎧 Sentiment Visualizer — “Speak Your Emotion”
+# 🎧 Sentiment Aura  
+**Real-time Speech Sentiment Visualization Powered by Perlin Noise**
 
-A real-time, full-stack application that turns your **voice sentiment** into **Perlin-noise-based visual art**.  
-Built with React, p5.js, and Deepgram for audio streaming + sentiment AI.
-
----
-
-## 🧠 Overview
-
-Your voice is streamed to Deepgram → transcribed → sent to a backend (FastAPI + OpenAI/Hugging Face) → analyzed for **sentiment (−1 to +1)** and **keywords**.  
-These values drive the **color**, **motion speed**, and **pattern** of an evolving Perlin field.
-
-| Sentiment | Color | Motion |
-|------------|--------|--------|
-| −1 | Red | Slow |
-| 0 | Yellow | Balanced |
-| +1 | Green | Fast |
+[🌐 Live Demo](https://sentiment-aura.vercel.app) • [🧠 Backend API](https://sentiment-aura-backend.vercel.app)
 
 ---
 
-## 🧩 Stack
-
-- 🎙️ **Deepgram Realtime API** – speech-to-text via WebSocket  
-- 🧠 **FastAPI / OpenAI** – sentiment & keyword processing  
-- 🎨 **React + p5.js (TypeScript)** – data-driven visualization  
-- 💅 **Tailwind CSS** – minimal responsive design  
+## 🚀 Overview  
+**Sentiment Aura** transforms spoken emotion into generative art.  
+It listens to your voice, analyzes sentiment using AI, and visualizes it through animated Perlin noise patterns that shift in color, speed, and form based on emotional tone.
 
 ---
 
-## 🌀 Visualization Modes
-
-All patterns use Perlin or curl noise:
-
-- **Flow Field** – smooth particle trails  
-- **Perlin Warp** – noise-displaced color gradients  
-- **Particle Swarm** – organic movement clouds  
-- **Aurora Bands** – light-wave ribbons  
-
-Speed and hue respond dynamically to sentiment intensity.
+## ✨ Key Features  
+- 🎙️ **Real-time transcription** via Deepgram WebSocket streaming  
+- 🎨 **Perlin-based generative visuals** (Flow Field, Warp, Swarm, Aurora)  
+- 💡 **Emotion-driven color transitions** (red → orange → yellow → green)  
+- ⚙️ **Robust async & error handling** (network, API, mic, offline)  
+- 🔒 **Secure OpenAI proxy backend** for sentiment + keyword extraction  
+- 🌈 **Minimal, modern, borderless UI** built with React + TailwindCSS  
+- 🧩 **Full TypeScript stack** (Vite + Express + OpenAPI Docs)
 
 ---
 
-## ⚙️ Async Management & Error Handling
+## 🧠 Architecture  
 
-The app handles all network and audio errors gracefully:
+**Frontend (Vite + React)**  
+- WebSocket → Deepgram (real-time speech-to-text)  
+- REST → Backend `/api/v1/ai` (sentiment & keywords)  
 
-- **Backend down / API fail** → red toast: *“⚠️ Sentiment analysis failed”*  
-- **Slow AI response** → animated *“Analyzing…”* indicator  
-- **WebSocket disconnect** → auto cleanup + user retry option  
-- **Mic denied** → toast: *“🎤 Microphone access denied”*  
-
-All states (`isLoading`, `isRecording`, `errorMessage`) are React-driven and non-blocking.  
-Toasts auto-dismiss within 4–5s.
+**Backend (Node + Express)**  
+- `/api/v1/ai/process-text` → OpenAI for sentiment + keyword analysis  
+- `/docs` → Swagger API documentation  
 
 ---
 
-## 💫 User Flow
+## 🛠️ Quick Start  
 
-1. **Start Recording** → begin live mic stream  
-2. Speak naturally and pause  
-3. Deepgram finalizes text → backend processes  
-4. Visualization updates with color, speed, and keywords  
-5. **Stop** anytime to end session
+### 1️⃣ Clone the Repo  
+```
+git clone https://github.com/lakshdhamija/sentiment-aura
+cd sentiment-aura
+```
+
+### 2️⃣ Backend Setup  
+```
+cd backend
+cp .env.example .env
+npm install
+npm run build
+npm start
+```
+
+### 3️⃣ Frontend Setup  
+```
+cd frontend
+cp .env.example .env
+npm install
+npm run dev
+```
+
+### 4️⃣ Access Locally  
+- Frontend → http://localhost:5173  
+- Backend → http://localhost:8000  
 
 ---
 
-## 🧰 Run Locally
+## 🧩 Tech Stack  
+**Frontend:** React, TypeScript, Vite, TailwindCSS, p5.js  
+**Backend:** Node.js, Express, TypeScript, OpenAI API, Swagger  
+**Speech Engine:** Deepgram  
+**Deployment:** Vercel (Frontend + Backend)  
+**CI/CD:** GitHub Actions  
 
-### Backend
-```bash
-uvicorn server.main:app --reload
-# exposes POST /api/v1/ai/process-text
+---
+
+## 📈 Future Improvements  
+- ✅ Ephemeral token flow for Deepgram (production-grade security)  
+- 🎨 Smoother Perlin transitions between sentiment shifts  
+- 🔊 Ambient visualizer overlay for continuous audio input  
+- 🧵 Voice-to-text journaling mode  
+
+---
+
+## 📜 License  
+MIT © [Laksh Dhamija](https://github.com/lakshdhamija)
+
