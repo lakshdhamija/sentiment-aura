@@ -20,6 +20,7 @@ describe("POST /api/v1/ai/process-text", () => {
         sentiment: 0.9,
         keywords: ["mocked", "response"],
       },
+      error: null
     });
   });
 

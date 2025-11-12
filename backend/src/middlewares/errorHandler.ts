@@ -1,4 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
+import { ZodError } from "zod";
 
 // Centralized error handler
 export const errorHandler = (
@@ -9,9 +10,10 @@ export const errorHandler = (
 ) => {
   console.error("❌  Error:", err);
 
-  // Handle Zod validation errors
-  if (err?.errors && Array.isArray(err.errors)) {
-    const message = err.errors[0]?.message || "Invalid input data";
+  // ✅ Handle Zod validation errors safely
+  if (err instanceof ZodError) {
+    const message =
+      err.issues?.[0]?.message || "Invalid input data"; // ✅ use `issues` instead of `errors`
     return res.status(400).json({
       success: false,
       data: null,
@@ -19,7 +21,7 @@ export const errorHandler = (
     });
   }
 
-  // Handle known app errors
+  // ✅ Handle known app errors (custom status codes)
   if (err.statusCode && err.message) {
     return res.status(err.statusCode).json({
       success: false,
@@ -28,7 +30,17 @@ export const errorHandler = (
     });
   }
 
-  // Fallback – unexpected errors
+  // ✅ Optional: handle legacy shape (if thrown manually with `errors`)
+  if (Array.isArray(err.errors)) {
+    const message = err.errors[0]?.message || "Invalid input data";
+    return res.status(400).json({
+      success: false,
+      data: null,
+      error: message,
+    });
+  }
+
+  // ✅ Fallback for unexpected errors
   return res.status(500).json({
     success: false,
     data: null,
