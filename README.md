@@ -70,15 +70,7 @@ npm run dev
 **Backend:** Node.js, Express, TypeScript, groq API, Swagger  
 **Speech Engine:** Deepgram  
 **Deployment:** Vercel (Frontend + Backend)  
-**CI/CD:** GitHub Actions  
-
----
-
-## 📈 Future Improvements  
-- ✅ Ephemeral token flow for Deepgram (production-grade security)  
-- 🎨 Smoother Perlin transitions between sentiment shifts  
-- 🔊 Ambient visualizer overlay for continuous audio input  
-- 🧵 Voice-to-text journaling mode  
+**CI/CD:** GitHub Actions
 
 ---
 
