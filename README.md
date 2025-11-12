@@ -16,7 +16,7 @@ It listens to your voice, analyzes sentiment using AI, and visualizes it through
 - 🎨 **Perlin-based generative visuals** (Flow Field, Warp, Swarm, Aurora)  
 - 💡 **Emotion-driven color transitions** (red → orange → yellow → green)  
 - ⚙️ **Robust async & error handling** (network, API, mic, offline)  
-- 🔒 **Secure OpenAI proxy backend** for sentiment + keyword extraction  
+- 🔒 **Secure groq proxy backend** for sentiment + keyword extraction  
 - 🌈 **Minimal, modern, borderless UI** built with React + TailwindCSS  
 - 🧩 **Full TypeScript stack** (Vite + Express + OpenAPI Docs)
 
@@ -29,7 +29,7 @@ It listens to your voice, analyzes sentiment using AI, and visualizes it through
 - REST → Backend `/api/v1/ai` (sentiment & keywords)  
 
 **Backend (Node + Express)**  
-- `/api/v1/ai/process-text` → OpenAI for sentiment + keyword analysis  
+- `/api/v1/ai/process-text` → groq for sentiment + keyword analysis  
 - `/docs` → Swagger API documentation  
 
 ---
@@ -67,7 +67,7 @@ npm run dev
 
 ## 🧩 Tech Stack  
 **Frontend:** React, TypeScript, Vite, TailwindCSS, p5.js  
-**Backend:** Node.js, Express, TypeScript, OpenAI API, Swagger  
+**Backend:** Node.js, Express, TypeScript, groq API, Swagger  
 **Speech Engine:** Deepgram  
 **Deployment:** Vercel (Frontend + Backend)  
 **CI/CD:** GitHub Actions  
