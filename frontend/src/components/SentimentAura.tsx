@@ -60,6 +60,8 @@ export default function SentimentAura({
           p5.colorMode(p5.HSL, 360, 100, 100, 100);
           p5.noiseDetail(4, 0.5);
           p5.background(0, 0, theme === "dark" ? 5 : 95);
+          p5.pixelDensity(1);
+          p5.frameRate(55);
 
           const parts = [];
           for (let i = 0; i < 1400; i++) {
