@@ -68,7 +68,7 @@ export default function App() {
       },
     });
 
-  // Derived Visual Styles 
+  // Derived Visual Styles
   const hue = useMemo(
     () => (sentiment == null ? 220 : hueFromSentimentValue(sentiment)),
     [sentiment]
@@ -88,7 +88,7 @@ export default function App() {
     [hue]
   );
 
-  // Keyword Fade-In 
+  // Keyword Fade-In
   const [visibleCount, setVisibleCount] = useState(0);
   useEffect(() => {
     setVisibleCount(0);
@@ -101,6 +101,11 @@ export default function App() {
     );
     return () => timers.forEach(clearTimeout);
   }, [keywords]);
+
+  useEffect(() => {
+    const box = document.getElementById("transcript-box");
+    if (box) box.scrollTop = box.scrollHeight;
+  }, [transcript]);
 
   // UI Render
   return (
@@ -182,10 +187,13 @@ export default function App() {
           </div>
 
           {/* Transcript */}
-          <p className="max-w-[80vw] md:max-w-2xl text-base md:text-lg leading-relaxed text-white/90">
+          <div
+            id="transcript-box"
+            className="max-w-[80vw] md:max-w-2xl text-base md:text-lg leading-relaxed text-white/90 text-center bg-white/5 backdrop-blur-md rounded-2xl p-3 max-h-40 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent whitespace-pre-wrap"
+          >
             {transcript ||
               "🎧 Say something. When you pause, it’ll analyze your tone."}
-          </p>
+          </div>
 
           {/* Sentiment + Keywords */}
           <div className="flex flex-col items-center gap-3">

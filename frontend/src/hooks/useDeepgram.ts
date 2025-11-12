@@ -40,7 +40,7 @@ export function useDeepgram({ onFinalSentence, onError }: UseDeepgramProps) {
           const data = JSON.parse(msg.data);
           const text = data.channel?.alternatives?.[0]?.transcript?.trim();
           if (text && data.is_final) {
-            setTranscript((prev) => `${prev} ${text}`);
+            setTranscript((prev) => `${prev}\n${text}`);
             onFinalSentence?.(text);
           }
         } catch {

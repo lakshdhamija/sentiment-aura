@@ -1,7 +1,7 @@
 # 🎧 Sentiment Aura  
 **Real-time Speech Sentiment Visualization Powered by Perlin Noise**
 
-[🌐 Live Demo](https://sentiment-aura-five.vercel.app) • [🧠 Backend API](https://sentiment-aura-backend.vercel.app)
+[🌐 Live Demo](https://sentiment-aura-five.vercel.app) • [🧠 Backend API](https://sentiment-aura-vc6b.onrender.com)
 
 ---
 
